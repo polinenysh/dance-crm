@@ -32,28 +32,19 @@ class StudentRepository(
     ) -> list[Student]:
         """Возвращает учеников со связанными данными."""
 
-        query: Select[tuple[Student]] = (
-            select(Student)
-            .options(
-                selectinload(Student.parent),
-                selectinload(Student.branch),
-            )
+        query: Select[tuple[Student]] = select(Student).options(
+            selectinload(Student.parent),
+            selectinload(Student.branch),
         )
 
         if branch_id is not None:
-            query = query.where(
-                Student.branch_id == branch_id
-            )
+            query = query.where(Student.branch_id == branch_id)
 
         if parent_id is not None:
-            query = query.where(
-                Student.parent_id == parent_id
-            )
+            query = query.where(Student.parent_id == parent_id)
 
         if status is not None:
-            query = query.where(
-                Student.status == status
-            )
+            query = query.where(Student.status == status)
 
         if search:
             search_value = f"%{search.strip()}%"

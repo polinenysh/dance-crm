@@ -40,9 +40,7 @@ def _handler(path: str, formatter: logging.Formatter) -> RotatingFileHandler:
 
 def configure_logging() -> None:
     """Настраивает технический и аудит-лог в отдельных файлах."""
-    formatter = logging.Formatter(
-        "%(asctime)s %(levelname)s %(name)s request_id=%(request_id)s %(message)s"
-    )
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s request_id=%(request_id)s %(message)s")
 
     root = logging.getLogger()
     root.handlers.clear()
@@ -55,9 +53,7 @@ def configure_logging() -> None:
     audit_logger.propagate = False
     audit_logger.addHandler(_handler(settings.audit_log_file, formatter))
 
-    logging.getLogger("sqlalchemy.engine").setLevel(
-        logging.INFO if settings.log_sql else logging.WARNING
-    )
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO if settings.log_sql else logging.WARNING)
 
 
 def audit_event(
@@ -90,7 +86,7 @@ def _actor_id(request: Request) -> int | None:
         if payload.get("type") != "access":
             return None
         return int(payload["sub"])
-    except (jwt.InvalidTokenError, KeyError, TypeError, ValueError):
+    except jwt.InvalidTokenError, KeyError, TypeError, ValueError:
         return None
 
 
@@ -113,11 +109,15 @@ def _audit_action(request: Request) -> tuple[str, str | None] | None:
         return None
 
     entity = parts[0]
-    suffix = ".deleted" if method == "DELETE" else {
-        "POST": ".created_or_action",
-        "PUT": ".synchronized",
-        "PATCH": ".updated",
-    }[method]
+    suffix = (
+        ".deleted"
+        if method == "DELETE"
+        else {
+            "POST": ".created_or_action",
+            "PUT": ".synchronized",
+            "PATCH": ".updated",
+        }[method]
+    )
     return entity + suffix, entity
 
 

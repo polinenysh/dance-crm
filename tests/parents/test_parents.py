@@ -82,9 +82,7 @@ async def test_create_parent_with_duplicate_phone(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Родитель с таким телефоном уже существует"
-    )
+    assert response.json()["detail"] == ("Родитель с таким телефоном уже существует")
 
 
 async def test_parent_phone_must_contain_twelve_characters(
@@ -221,9 +219,7 @@ async def test_owner_can_update_parent(
 
     assert response.status_code == 200
     assert response.json()["first_name"] == "Екатерина"
-    assert response.json()["comment"] == (
-        "Обновлённый комментарий"
-    )
+    assert response.json()["comment"] == ("Обновлённый комментарий")
 
 
 async def test_update_parent_with_duplicate_phone(

@@ -1,6 +1,7 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
-from typing import Annotated
 
 from app.db.session import SessionDep
 from app.modules.auth.dependencies import CurrentUserDep

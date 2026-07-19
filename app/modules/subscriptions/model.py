@@ -15,13 +15,13 @@ from app.db.base import Base, IdMixin, TimestampMixin
 from app.shared.enums import SubscriptionStatus
 
 if TYPE_CHECKING:
+    from app.modules.attendance.model import Attendance
     from app.modules.branches.model import Branch
+    from app.modules.payments.model import Payment
+    from app.modules.schedule.model import Lesson
     from app.modules.students.model import Student
     from app.modules.subscription_plans.model import SubscriptionPlan
     from app.modules.users.model import User
-    from app.modules.attendance.model import Attendance
-    from app.modules.schedule.model import Lesson
-    from app.modules.payments.model import Payment
 
 
 class StudentSubscription(IdMixin, TimestampMixin, Base):
@@ -137,7 +137,7 @@ class StudentSubscription(IdMixin, TimestampMixin, Base):
         back_populates="subscription",
         cascade="all, delete-orphan",
     )
-    
+
     payments: Mapped[list["Payment"]] = relationship(
         back_populates="subscription",
     )
@@ -155,13 +155,12 @@ class StudentSubscription(IdMixin, TimestampMixin, Base):
             return SubscriptionStatus.EXPIRED
 
         return SubscriptionStatus.ACTIVE
-    
+
     @property
     def lessons_used(self) -> int:
         """Возвращает количество использованных занятий."""
 
         return len(self.attendances)
-
 
     @property
     def lessons_remaining(self) -> int:
@@ -231,5 +230,3 @@ class SubscriptionExtension(IdMixin, TimestampMixin, Base):
     created_by_user: Mapped["User | None"] = relationship(
         foreign_keys=[created_by],
     )
-
-    

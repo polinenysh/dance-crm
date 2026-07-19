@@ -104,9 +104,7 @@ async def test_access_token_cannot_be_used_as_refresh(
 ) -> None:
     """Проверяет различие access- и refresh-токенов."""
 
-    access_token = owner_headers["Authorization"].removeprefix(
-        "Bearer "
-    )
+    access_token = owner_headers["Authorization"].removeprefix("Bearer ")
 
     response = await client.post(
         "/api/v1/auth/refresh",

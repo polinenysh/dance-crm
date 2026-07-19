@@ -141,10 +141,7 @@ class PaymentService:
         )
 
         return PaymentListResponse(
-            items=[
-                PaymentResponse.model_validate(payment)
-                for payment in payments
-            ],
+            items=[PaymentResponse.model_validate(payment) for payment in payments],
             total=total,
             limit=limit,
             offset=offset,
@@ -171,9 +168,7 @@ class PaymentService:
         if payment.status != PaymentStatus.COMPLETED:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=(
-                    "Можно изменять только проведённую оплату"
-                ),
+                detail=("Можно изменять только проведённую оплату"),
             )
 
         payment = await self.repository.update(
@@ -425,10 +420,7 @@ class PaymentService:
                     detail="Администратор не привязан к филиалу",
                 )
 
-            if (
-                branch_id is not None
-                and branch_id != current_user.branch_id
-            ):
+            if branch_id is not None and branch_id != current_user.branch_id:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Нет доступа к этому филиалу",

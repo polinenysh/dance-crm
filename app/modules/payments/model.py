@@ -76,9 +76,7 @@ class Payment(Base, TimestampMixin):
         Enum(
             PaymentMethod,
             name="payment_method",
-            values_callable=lambda enum_class: [
-                item.value for item in enum_class
-            ],
+            values_callable=lambda enum_class: [item.value for item in enum_class],
         ),
         nullable=False,
     )
@@ -87,9 +85,7 @@ class Payment(Base, TimestampMixin):
         Enum(
             PaymentStatus,
             name="payment_status",
-            values_callable=lambda enum_class: [
-                item.value for item in enum_class
-            ],
+            values_callable=lambda enum_class: [item.value for item in enum_class],
         ),
         nullable=False,
         default=PaymentStatus.COMPLETED,

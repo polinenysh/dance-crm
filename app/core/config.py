@@ -1,16 +1,17 @@
-from functools import lru_cache
 from datetime import datetime
+from functools import lru_cache
+from zoneinfo import ZoneInfo
 
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from zoneinfo import ZoneInfo
-
 MOSCOW_TIMEZONE = ZoneInfo("Europe/Moscow")
+
 
 def to_moscow_time(value: datetime) -> datetime:
     """Преобразует дату и время в московский часовой пояс."""
     return value.astimezone(MOSCOW_TIMEZONE)
+
 
 class Settings(BaseSettings):
     app_name: str = "Dance CRM API"

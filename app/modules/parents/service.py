@@ -56,12 +56,10 @@ class ParentService:
                     detail="Администратору не назначен филиал",
                 )
 
-            has_access = (
-                await parent_repository.has_student_in_branch(
-                    session,
-                    parent.id,
-                    current_user.branch_id,
-                )
+            has_access = await parent_repository.has_student_in_branch(
+                session,
+                parent.id,
+                current_user.branch_id,
             )
 
             if not has_access:

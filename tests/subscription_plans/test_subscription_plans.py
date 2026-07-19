@@ -26,13 +26,8 @@ async def test_owner_can_create_subscription_plan(
     data = response.json()
 
     assert data["id"] > 0
-    assert data["name"] == (
-        subscription_plan_payload["name"].strip().lower()
-    )
-    assert (
-        data["lessons_count"]
-        == subscription_plan_payload["lessons_count"]
-    )
+    assert data["name"] == (subscription_plan_payload["name"].strip().lower())
+    assert data["lessons_count"] == subscription_plan_payload["lessons_count"]
     assert data["price"] == subscription_plan_payload["price"]
     assert data["is_active"] is True
 
@@ -113,9 +108,7 @@ async def test_cannot_create_plan_for_inactive_branch(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Нельзя создать тип абонемента для неактивного филиала"
-    )
+    assert response.json()["detail"] == ("Нельзя создать тип абонемента для неактивного филиала")
 
 
 async def test_lessons_count_must_be_positive(
@@ -210,9 +203,7 @@ async def test_cannot_create_duplicate_plan_in_same_branch(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Тип абонемента с таким названием уже существует в филиале"
-    )
+    assert response.json()["detail"] == ("Тип абонемента с таким названием уже существует в филиале")
 
 
 async def test_plan_name_uniqueness_is_case_insensitive(
@@ -234,9 +225,7 @@ async def test_plan_name_uniqueness_is_case_insensitive(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Тип абонемента с таким названием уже существует в филиале"
-    )
+    assert response.json()["detail"] == ("Тип абонемента с таким названием уже существует в филиале")
 
 
 async def test_same_plan_name_allowed_in_different_branches(
@@ -479,10 +468,7 @@ async def test_branch_admin_cannot_get_other_branch_plan(
     """Проверяет запрет просмотра типа абонемента чужого филиала."""
 
     response = await client.get(
-        (
-            "/api/v1/subscription-plans/"
-            f"{other_branch_subscription_plan.id}"
-        ),
+        ("/api/v1/subscription-plans/" f"{other_branch_subscription_plan.id}"),
         headers=branch_admin_headers,
     )
 
@@ -578,9 +564,7 @@ async def test_update_plan_with_duplicate_name(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Тип абонемента с таким названием уже существует в филиале"
-    )
+    assert response.json()["detail"] == ("Тип абонемента с таким названием уже существует в филиале")
 
 
 async def test_update_plan_with_same_name_is_allowed(
@@ -671,9 +655,8 @@ async def test_cannot_move_plan_to_inactive_branch(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Нельзя создать тип абонемента для неактивного филиала"
-    )
+    assert response.json()["detail"] == ("Нельзя создать тип абонемента для неактивного филиала")
+
 
 async def test_plan_name_is_normalized_on_create(
     client: AsyncClient,

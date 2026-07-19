@@ -29,9 +29,7 @@ class BranchRepository(
     ) -> list[Branch]:
         """Возвращает филиалы, отсортированные по названию."""
 
-        result = await session.scalars(
-            select(Branch).order_by(Branch.name)
-        )
+        result = await session.scalars(select(Branch).order_by(Branch.name))
         return list(result.all())
 
     async def get_by_name(
@@ -41,9 +39,7 @@ class BranchRepository(
     ) -> Branch | None:
         """Возвращает филиал по названию."""
 
-        result = await session.scalars(
-            select(Branch).where(Branch.name == name)
-        )
+        result = await session.scalars(select(Branch).where(Branch.name == name))
         return result.first()
 
 

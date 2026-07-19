@@ -15,6 +15,7 @@ class BranchBase(BaseModel):
 
 class BranchCreate(BranchBase):
     """Схема создания филиала."""
+
     pass
 
 

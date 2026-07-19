@@ -103,10 +103,14 @@ class PaymentRepository:
             paid_to=paid_to,
         )
 
-        query = query.order_by(
-            Payment.paid_at.desc(),
-            Payment.id.desc(),
-        ).limit(limit).offset(offset)
+        query = (
+            query.order_by(
+                Payment.paid_at.desc(),
+                Payment.id.desc(),
+            )
+            .limit(limit)
+            .offset(offset)
+        )
 
         result = await self.session.execute(query)
 

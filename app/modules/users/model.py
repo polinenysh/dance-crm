@@ -47,9 +47,7 @@ class User(IdMixin, TimestampMixin, Base):
         Enum(
             UserRole,
             name="user_role",
-            values_callable=lambda enum_class: [
-                item.value for item in enum_class
-            ],
+            values_callable=lambda enum_class: [item.value for item in enum_class],
         ),
         nullable=False,
     )
@@ -72,7 +70,6 @@ class User(IdMixin, TimestampMixin, Base):
     branch: Mapped["Branch | None"] = relationship(
         back_populates="users",
     )
-
 
     created_payments: Mapped[list["Payment"]] = relationship(
         foreign_keys="Payment.created_by",

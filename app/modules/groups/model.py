@@ -17,9 +17,9 @@ from app.db.base import Base, IdMixin, TimestampMixin
 if TYPE_CHECKING:
     from app.modules.branches.model import Branch
     from app.modules.dance_styles.model import DanceStyle
+    from app.modules.schedule.model import Lesson, ScheduleSlot
     from app.modules.students.model import Student
     from app.modules.teachers.model import Teacher
-    from app.modules.schedule.model import Lesson, ScheduleSlot
 
 
 class Group(IdMixin, TimestampMixin, Base):

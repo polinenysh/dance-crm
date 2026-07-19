@@ -225,7 +225,7 @@ class GroupRepository:
         result = await session.scalars(query)
 
         return list(result.all())
-    
+
     async def get_active_student_ids(
         self,
         session: AsyncSession,

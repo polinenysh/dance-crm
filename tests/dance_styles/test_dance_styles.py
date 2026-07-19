@@ -77,9 +77,7 @@ async def test_create_duplicate_dance_style(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Направление с таким названием уже существует"
-    )
+    assert response.json()["detail"] == ("Направление с таким названием уже существует")
 
 
 async def test_create_duplicate_dance_style_case_insensitive(

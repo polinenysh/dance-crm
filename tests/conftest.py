@@ -16,26 +16,22 @@ from app.db import models  # noqa: F401
 from app.db.base import Base
 from app.db.session import get_session
 from app.main import app
+from app.modules.attendance.model import Attendance
 from app.modules.auth.security import hash_password
 from app.modules.branches.model import Branch
-from app.modules.parents.model import Parent
-from app.modules.students.model import Student
-from app.modules.users.model import User
 from app.modules.dance_styles.model import DanceStyle
-from app.modules.teachers.model import Teacher
 from app.modules.groups.model import Group, GroupMembership
-from app.shared.enums import StudentStatus, UserRole
 from app.modules.halls.model import Hall
+from app.modules.parents.model import Parent
 from app.modules.schedule.model import Lesson, ScheduleSlot
+from app.modules.students.model import Student
 from app.modules.subscription_plans.model import SubscriptionPlan
 from app.modules.subscriptions.model import StudentSubscription
-from app.modules.attendance.model import Attendance
-from app.shared.enums import LessonStatus, Weekday
+from app.modules.teachers.model import Teacher
+from app.modules.users.model import User
+from app.shared.enums import LessonStatus, StudentStatus, UserRole, Weekday
 
-TEST_DATABASE_URL = (
-    "postgresql+asyncpg://"
-    "postgres:postgres@localhost:5433/dance_crm_test"
-)
+TEST_DATABASE_URL = "postgresql+asyncpg://" "postgres:postgres@localhost:5433/dance_crm_test"
 
 test_engine = create_async_engine(
     TEST_DATABASE_URL,
@@ -410,6 +406,7 @@ def student_payload(
         "comment": None,
     }
 
+
 @pytest_asyncio.fixture
 async def dance_style(
     session: AsyncSession,
@@ -644,6 +641,7 @@ def group_payload(
         "max_students": 20,
     }
 
+
 @pytest_asyncio.fixture
 async def hall(
     session: AsyncSession,
@@ -811,6 +809,7 @@ def schedule_slot_payload(
         "end_time": "19:00:00",
     }
 
+
 @pytest_asyncio.fixture
 async def subscription_plan(
     session: AsyncSession,
@@ -911,6 +910,7 @@ def subscription_plan_payload(
         "lessons_count": 16,
         "price": 11000,
     }
+
 
 @pytest_asyncio.fixture
 async def student_subscription(
@@ -1102,6 +1102,7 @@ async def second_student_subscription(
     await session.refresh(subscription)
 
     return subscription
+
 
 @pytest_asyncio.fixture
 async def following_student_subscription(

@@ -32,11 +32,7 @@ class ParentRepository(
         query: Select[tuple[Parent]] = select(Parent)
 
         if branch_id is not None:
-            query = (
-                query.join(Student)
-                .where(Student.branch_id == branch_id)
-                .distinct()
-            )
+            query = query.join(Student).where(Student.branch_id == branch_id).distinct()
 
         if search:
             search_value = f"%{search.strip()}%"

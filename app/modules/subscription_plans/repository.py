@@ -16,11 +16,8 @@ class SubscriptionPlanRepository:
     ) -> list[SubscriptionPlan]:
         """Возвращает типы абонементов с фильтрацией."""
 
-        query: Select[tuple[SubscriptionPlan]] = (
-            select(SubscriptionPlan)
-            .options(
-                selectinload(SubscriptionPlan.branch),
-            )
+        query: Select[tuple[SubscriptionPlan]] = select(SubscriptionPlan).options(
+            selectinload(SubscriptionPlan.branch),
         )
 
         if branch_id is not None:

@@ -151,9 +151,7 @@ async def test_cannot_create_slot_with_hall_from_other_branch(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Группа и зал относятся к разным филиалам"
-    )
+    assert response.json()["detail"] == ("Группа и зал относятся к разным филиалам")
 
 
 async def test_cannot_create_slot_in_inactive_hall(
@@ -173,9 +171,7 @@ async def test_cannot_create_slot_in_inactive_hall(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Нельзя использовать неактивный зал"
-    )
+    assert response.json()["detail"] == ("Нельзя использовать неактивный зал")
 
 
 async def test_hall_capacity_must_fit_group(
@@ -200,9 +196,7 @@ async def test_hall_capacity_must_fit_group(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Вместимость зала меньше вместимости группы"
-    )
+    assert response.json()["detail"] == ("Вместимость зала меньше вместимости группы")
 
 
 async def test_cannot_create_overlapping_slot_for_same_hall(
@@ -227,10 +221,7 @@ async def test_cannot_create_overlapping_slot_for_same_hall(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Расписание пересекается по группе, залу "
-        "или преподавателю"
-    )
+    assert response.json()["detail"] == ("Расписание пересекается по группе, залу " "или преподавателю")
 
 
 async def test_adjacent_schedule_slots_do_not_conflict(
@@ -370,10 +361,7 @@ async def test_generate_lessons_for_date_range(
     """Проверяет генерацию занятий по шаблону."""
 
     response = await client.post(
-        (
-            f"/api/v1/schedule/slots/"
-            f"{schedule_slot.id}/lessons/generate"
-        ),
+        (f"/api/v1/schedule/slots/" f"{schedule_slot.id}/lessons/generate"),
         headers=owner_headers,
         json={
             "date_from": "2026-07-20",
@@ -387,29 +375,17 @@ async def test_generate_lessons_for_date_range(
 
     assert len(data) == 3
 
-    assert [
-        item["starts_at"][:10]
-        for item in data
-    ] == [
+    assert [item["starts_at"][:10] for item in data] == [
         "2026-07-20",
         "2026-07-27",
         "2026-08-03",
     ]
 
-    assert all(
-        item["status"] == "planned"
-        for item in data
-    )
+    assert all(item["status"] == "planned" for item in data)
 
-    assert all(
-        item["group"]["id"] == schedule_slot.group_id
-        for item in data
-    )
+    assert all(item["group"]["id"] == schedule_slot.group_id for item in data)
 
-    assert all(
-        item["hall"]["id"] == schedule_slot.hall_id
-        for item in data
-    )
+    assert all(item["hall"]["id"] == schedule_slot.hall_id for item in data)
 
 
 async def test_generate_lessons_does_not_create_duplicates(
@@ -425,19 +401,13 @@ async def test_generate_lessons_does_not_create_duplicates(
     }
 
     first_response = await client.post(
-        (
-            f"/api/v1/schedule/slots/"
-            f"{schedule_slot.id}/lessons/generate"
-        ),
+        (f"/api/v1/schedule/slots/" f"{schedule_slot.id}/lessons/generate"),
         headers=owner_headers,
         json=payload,
     )
 
     second_response = await client.post(
-        (
-            f"/api/v1/schedule/slots/"
-            f"{schedule_slot.id}/lessons/generate"
-        ),
+        (f"/api/v1/schedule/slots/" f"{schedule_slot.id}/lessons/generate"),
         headers=owner_headers,
         json=payload,
     )
@@ -461,10 +431,7 @@ async def test_cannot_generate_lessons_for_inactive_slot(
     await session.commit()
 
     response = await client.post(
-        (
-            f"/api/v1/schedule/slots/"
-            f"{schedule_slot.id}/lessons/generate"
-        ),
+        (f"/api/v1/schedule/slots/" f"{schedule_slot.id}/lessons/generate"),
         headers=owner_headers,
         json={
             "date_from": "2026-07-20",
@@ -473,9 +440,7 @@ async def test_cannot_generate_lessons_for_inactive_slot(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Нельзя создавать занятия по неактивному расписанию"
-    )
+    assert response.json()["detail"] == ("Нельзя создавать занятия по неактивному расписанию")
 
 
 async def test_lesson_generation_range_cannot_exceed_93_days(
@@ -486,10 +451,7 @@ async def test_lesson_generation_range_cannot_exceed_93_days(
     """Проверяет максимальный диапазон генерации."""
 
     response = await client.post(
-        (
-            f"/api/v1/schedule/slots/"
-            f"{schedule_slot.id}/lessons/generate"
-        ),
+        (f"/api/v1/schedule/slots/" f"{schedule_slot.id}/lessons/generate"),
         headers=owner_headers,
         json={
             "date_from": "2026-01-01",
@@ -647,9 +609,7 @@ async def test_cannot_cancel_completed_lesson(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Нельзя отменить завершённое занятие"
-    )
+    assert response.json()["detail"] == ("Нельзя отменить завершённое занятие")
 
 
 async def test_branch_admin_sees_only_own_branch_slots(

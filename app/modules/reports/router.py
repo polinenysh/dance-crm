@@ -41,7 +41,13 @@ async def get_dashboard(
     result = await report_service.get_dashboard(
         session, resolved_from, resolved_to, resolved_branch, expiring_within_days
     )
-    audit_event("report.dashboard_generated", actor_id=current_user.id, entity="report", branch_id=resolved_branch, details={"date_from": resolved_from, "date_to": resolved_to})
+    audit_event(
+        "report.dashboard_generated",
+        actor_id=current_user.id,
+        entity="report",
+        branch_id=resolved_branch,
+        details={"date_from": resolved_from, "date_to": resolved_to},
+    )
     return result
 
 
@@ -61,7 +67,13 @@ async def get_revenue(
     validate_period(resolved_from, resolved_to)
     resolved_branch = resolve_branch_id(current_user, branch_id)
     result = await report_service.get_revenue(session, resolved_from, resolved_to, resolved_branch)
-    audit_event("report.revenue_generated", actor_id=current_user.id, entity="report", branch_id=resolved_branch, details={"date_from": resolved_from, "date_to": resolved_to})
+    audit_event(
+        "report.revenue_generated",
+        actor_id=current_user.id,
+        entity="report",
+        branch_id=resolved_branch,
+        details={"date_from": resolved_from, "date_to": resolved_to},
+    )
     return result
 
 
@@ -81,7 +93,13 @@ async def get_attendance(
     validate_period(resolved_from, resolved_to)
     resolved_branch = resolve_branch_id(current_user, branch_id)
     result = await report_service.get_attendance(session, resolved_from, resolved_to, resolved_branch)
-    audit_event("report.attendance_generated", actor_id=current_user.id, entity="report", branch_id=resolved_branch, details={"date_from": resolved_from, "date_to": resolved_to})
+    audit_event(
+        "report.attendance_generated",
+        actor_id=current_user.id,
+        entity="report",
+        branch_id=resolved_branch,
+        details={"date_from": resolved_from, "date_to": resolved_to},
+    )
     return result
 
 
@@ -97,7 +115,13 @@ async def get_subscriptions(
 
     resolved_branch = resolve_branch_id(current_user, branch_id)
     result = await report_service.get_subscriptions(session, resolved_branch, expiring_within_days, include_all)
-    audit_event("report.subscriptions_generated", actor_id=current_user.id, entity="report", branch_id=resolved_branch, details={"expiring_within_days": expiring_within_days, "include_all": include_all})
+    audit_event(
+        "report.subscriptions_generated",
+        actor_id=current_user.id,
+        entity="report",
+        branch_id=resolved_branch,
+        details={"expiring_within_days": expiring_within_days, "include_all": include_all},
+    )
     return result
 
 

@@ -17,6 +17,7 @@ class DanceStyleBase(BaseModel):
 
 class DanceStyleCreate(DanceStyleBase):
     """Схема создания танцевального направления."""
+
     pass
 
 

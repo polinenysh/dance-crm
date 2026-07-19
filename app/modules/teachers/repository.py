@@ -43,9 +43,7 @@ class TeacherRepository(BaseRepository[Teacher, TeacherCreate, TeacherUpdate]):
                 )
             )
 
-        result = await session.scalars(
-            query.order_by(Teacher.last_name, Teacher.first_name)
-        )
+        result = await session.scalars(query.order_by(Teacher.last_name, Teacher.first_name))
         return list(result.unique().all())
 
     async def get_by_id(
@@ -56,9 +54,7 @@ class TeacherRepository(BaseRepository[Teacher, TeacherCreate, TeacherUpdate]):
         """Возвращает преподавателя со связанными направлениями."""
 
         result = await session.scalars(
-            select(Teacher)
-            .options(selectinload(Teacher.dance_styles))
-            .where(Teacher.id == object_id)
+            select(Teacher).options(selectinload(Teacher.dance_styles)).where(Teacher.id == object_id)
         )
         return result.first()
 

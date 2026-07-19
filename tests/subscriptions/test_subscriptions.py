@@ -40,10 +40,8 @@ def test_subscription_duration_is_thirty_inclusive_days() -> None:
 
     starts_on = date(2026, 2, 1)
 
-    expires_on = (
-        student_subscription_service.calculate_expiration_date(
-            starts_on,
-        )
+    expires_on = student_subscription_service.calculate_expiration_date(
+        starts_on,
     )
 
     assert (expires_on - starts_on).days + 1 == 30

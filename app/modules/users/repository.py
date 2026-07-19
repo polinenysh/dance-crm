@@ -45,9 +45,7 @@ class UserRepository(
     ) -> User | None:
         """Возвращает сотрудника по адресу электронной почты."""
 
-        result = await session.scalars(
-            select(User).where(User.email == email.lower())
-        )
+        result = await session.scalars(select(User).where(User.email == email.lower()))
         return result.first()
 
     async def create_with_password(

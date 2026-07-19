@@ -5,6 +5,7 @@ from fastapi import APIRouter, Query, status
 
 from app.db.session import SessionDep
 from app.modules.auth.dependencies import AdminOrOwnerDep
+from app.modules.schedule.repository import schedule_repository
 from app.modules.schedule.schemas import (
     LessonCancelRequest,
     LessonGenerateRequest,
@@ -15,7 +16,6 @@ from app.modules.schedule.schemas import (
 )
 from app.modules.schedule.service import schedule_service
 from app.shared.enums import LessonStatus
-from app.modules.schedule.repository import schedule_repository
 
 router = APIRouter(
     prefix="/schedule",

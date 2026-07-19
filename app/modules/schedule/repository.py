@@ -41,11 +41,7 @@ class ScheduleRepository:
     ) -> list[ScheduleSlot]:
         """Возвращает шаблоны расписания с фильтрацией."""
 
-        query: Select[tuple[ScheduleSlot]] = (
-            select(ScheduleSlot)
-            .join(ScheduleSlot.group)
-            .options(*self.slot_options())
-        )
+        query: Select[tuple[ScheduleSlot]] = select(ScheduleSlot).join(ScheduleSlot.group).options(*self.slot_options())
 
         if branch_id is not None:
             query = query.where(Group.branch_id == branch_id)
@@ -110,26 +106,18 @@ class ScheduleRepository:
         conflict_conditions = []
 
         if hall_id is not None:
-            conflict_conditions.append(
-                ScheduleSlot.hall_id == hall_id
-            )
+            conflict_conditions.append(ScheduleSlot.hall_id == hall_id)
 
         if group_id is not None:
-            conflict_conditions.append(
-                ScheduleSlot.group_id == group_id
-            )
+            conflict_conditions.append(ScheduleSlot.group_id == group_id)
 
         if teacher_id is not None:
-            conflict_conditions.append(
-                Group.teacher_id == teacher_id
-            )
+            conflict_conditions.append(Group.teacher_id == teacher_id)
 
         query = query.where(or_(*conflict_conditions))
 
         if excluded_slot_id is not None:
-            query = query.where(
-                ScheduleSlot.id != excluded_slot_id
-            )
+            query = query.where(ScheduleSlot.id != excluded_slot_id)
 
         result = await session.scalars(query.limit(1))
         return result.first()
@@ -234,9 +222,7 @@ class ScheduleRepository:
         )
 
         if excluded_lesson_id is not None:
-            query = query.where(
-                Lesson.id != excluded_lesson_id
-            )
+            query = query.where(Lesson.id != excluded_lesson_id)
 
         result = await session.scalars(query.limit(1))
         return result.first()

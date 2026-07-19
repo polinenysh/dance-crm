@@ -8,13 +8,13 @@ from app.db.base import Base, IdMixin, TimestampMixin
 from app.shared.enums import StudentStatus
 
 if TYPE_CHECKING:
-    from app.modules.branches.model import Branch
-    from app.modules.parents.model import Parent
-    from app.modules.users.model import User
-    from app.modules.groups.model import GroupMembership
-    from app.modules.subscriptions.model import StudentSubscription
     from app.modules.attendance.model import Attendance
+    from app.modules.branches.model import Branch
+    from app.modules.groups.model import GroupMembership
+    from app.modules.parents.model import Parent
     from app.modules.payments.model import Payment
+    from app.modules.subscriptions.model import StudentSubscription
+    from app.modules.users.model import User
 
 
 class Student(IdMixin, TimestampMixin, Base):
@@ -58,9 +58,7 @@ class Student(IdMixin, TimestampMixin, Base):
         Enum(
             StudentStatus,
             name="student_status",
-            values_callable=lambda enum_class: [
-                item.value for item in enum_class
-            ],
+            values_callable=lambda enum_class: [item.value for item in enum_class],
         ),
         default=StudentStatus.ACTIVE,
         server_default=StudentStatus.ACTIVE.value,
@@ -105,4 +103,3 @@ class Student(IdMixin, TimestampMixin, Base):
     payments: Mapped[list["Payment"]] = relationship(
         back_populates="student",
     )
-        

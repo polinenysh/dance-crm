@@ -47,10 +47,7 @@ class GroupService:
             search=search,
         )
 
-        return [
-            self.build_response(group)
-            for group in groups
-        ]
+        return [self.build_response(group) for group in groups]
 
     async def get_group(
         self,
@@ -154,10 +151,7 @@ class GroupService:
                 detail="Нельзя назначить неактивного преподавателя",
             )
 
-        teacher_style_ids = {
-            style.id
-            for style in teacher.dance_styles
-        }
+        teacher_style_ids = {style.id for style in teacher.dance_styles}
 
         if dance_style_id not in teacher_style_ids:
             raise HTTPException(
@@ -185,12 +179,10 @@ class GroupService:
             teacher_id=data.teacher_id,
         )
 
-        existing_group = (
-            await group_repository.get_by_name_and_branch(
-                session,
-                data.name,
-                data.branch_id,
-            )
+        existing_group = await group_repository.get_by_name_and_branch(
+            session,
+            data.name,
+            data.branch_id,
         )
 
         if existing_group is not None:
@@ -235,21 +227,9 @@ class GroupService:
             current_user,
         )
 
-        target_branch_id = (
-            data.branch_id
-            if data.branch_id is not None
-            else group.branch_id
-        )
-        target_dance_style_id = (
-            data.dance_style_id
-            if data.dance_style_id is not None
-            else group.dance_style_id
-        )
-        target_teacher_id = (
-            data.teacher_id
-            if data.teacher_id is not None
-            else group.teacher_id
-        )
+        target_branch_id = data.branch_id if data.branch_id is not None else group.branch_id
+        target_dance_style_id = data.dance_style_id if data.dance_style_id is not None else group.dance_style_id
+        target_teacher_id = data.teacher_id if data.teacher_id is not None else group.teacher_id
 
         ensure_branch_access(
             current_user,
@@ -264,42 +244,24 @@ class GroupService:
         )
 
         if data.name is not None:
-            existing_group = (
-                await group_repository.get_by_name_and_branch(
-                    session,
-                    data.name,
-                    target_branch_id,
-                )
+            existing_group = await group_repository.get_by_name_and_branch(
+                session,
+                data.name,
+                target_branch_id,
             )
 
-            if (
-                existing_group is not None
-                and existing_group.id != group.id
-            ):
+            if existing_group is not None and existing_group.id != group.id:
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
-                    detail=(
-                        "Группа с таким названием уже существует "
-                        "в филиале"
-                    ),
+                    detail=("Группа с таким названием уже существует " "в филиале"),
                 )
 
-        active_students_count = sum(
-            1
-            for membership in group.memberships
-            if membership.is_active
-        )
+        active_students_count = sum(1 for membership in group.memberships if membership.is_active)
 
-        if (
-            data.max_students is not None
-            and data.max_students < active_students_count
-        ):
+        if data.max_students is not None and data.max_students < active_students_count:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=(
-                    "Максимальное количество учеников не может быть "
-                    "меньше текущего состава группы"
-                ),
+                detail=("Максимальное количество учеников не может быть " "меньше текущего состава группы"),
             )
 
         update_data = data.model_dump(
@@ -471,11 +433,7 @@ class GroupService:
     ) -> GroupResponse:
         """Формирует API-ответ с активным составом группы."""
 
-        active_memberships = [
-            membership
-            for membership in group.memberships
-            if membership.is_active
-        ]
+        active_memberships = [membership for membership in group.memberships if membership.is_active]
 
         active_memberships.sort(
             key=lambda membership: (

@@ -83,10 +83,7 @@ class SubscriptionPlanService:
         if not branch.is_active:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=(
-                    "Нельзя создать тип абонемента "
-                    "для неактивного филиала"
-                ),
+                detail=("Нельзя создать тип абонемента " "для неактивного филиала"),
             )
 
     async def create(
@@ -109,21 +106,16 @@ class SubscriptionPlanService:
 
         normalized_name = data.name.strip().lower()
 
-        existing_plan = (
-            await subscription_plan_repository.get_by_name_and_branch(
-                session,
-                normalized_name,
-                data.branch_id,
-            )
+        existing_plan = await subscription_plan_repository.get_by_name_and_branch(
+            session,
+            normalized_name,
+            data.branch_id,
         )
 
         if existing_plan is not None:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=(
-                    "Тип абонемента с таким названием "
-                    "уже существует в филиале"
-                ),
+                detail=("Тип абонемента с таким названием " "уже существует в филиале"),
             )
 
         plan = SubscriptionPlan(
@@ -165,11 +157,7 @@ class SubscriptionPlanService:
             current_user,
         )
 
-        target_branch_id = (
-            data.branch_id
-            if data.branch_id is not None
-            else plan.branch_id
-        )
+        target_branch_id = data.branch_id if data.branch_id is not None else plan.branch_id
 
         ensure_branch_access(
             current_user,
@@ -182,31 +170,19 @@ class SubscriptionPlanService:
                 target_branch_id,
             )
 
-        normalized_name = (
-            data.name.strip().lower()
-            if data.name is not None
-            else plan.name
-        )
+        normalized_name = data.name.strip().lower() if data.name is not None else plan.name
 
         if data.name is not None or data.branch_id is not None:
-            existing_plan = (
-                await subscription_plan_repository.get_by_name_and_branch(
-                    session,
-                    normalized_name,
-                    target_branch_id,
-                )
+            existing_plan = await subscription_plan_repository.get_by_name_and_branch(
+                session,
+                normalized_name,
+                target_branch_id,
             )
 
-            if (
-                existing_plan is not None
-                and existing_plan.id != plan.id
-            ):
+            if existing_plan is not None and existing_plan.id != plan.id:
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
-                    detail=(
-                        "Тип абонемента с таким названием "
-                        "уже существует в филиале"
-                    ),
+                    detail=("Тип абонемента с таким названием " "уже существует в филиале"),
                 )
 
         update_data = data.model_dump(
@@ -234,5 +210,6 @@ class SubscriptionPlanService:
             )
 
         return updated_plan
+
 
 subscription_plan_service = SubscriptionPlanService()

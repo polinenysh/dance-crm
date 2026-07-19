@@ -52,9 +52,7 @@ class PaymentUpdate(BaseModel):
         """Проверяет наличие хотя бы одного изменяемого поля."""
 
         if not self.model_fields_set:
-            raise ValueError(
-                "Необходимо передать хотя бы одно поле для изменения"
-            )
+            raise ValueError("Необходимо передать хотя бы одно поле для изменения")
 
         return self
 

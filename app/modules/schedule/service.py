@@ -15,10 +15,10 @@ from app.modules.schedule.schemas import (
     ScheduleSlotCreate,
     ScheduleSlotUpdate,
 )
-from app.modules.users.model import User
 from app.modules.subscriptions.service import (
     student_subscription_service,
 )
+from app.modules.users.model import User
 from app.shared.enums import LessonStatus, UserRole
 
 MOSCOW_TIMEZONE = ZoneInfo("Europe/Moscow")
@@ -158,10 +158,7 @@ class ScheduleService:
         if conflict is not None:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=(
-                    "Расписание пересекается по группе, залу "
-                    "или преподавателю"
-                ),
+                detail=("Расписание пересекается по группе, залу " "или преподавателю"),
             )
 
     async def create_slot(
@@ -230,11 +227,7 @@ class ScheduleService:
         )
 
         target_hall_id = data.hall_id or slot.hall_id
-        target_weekday = (
-            int(data.weekday)
-            if data.weekday is not None
-            else int(slot.weekday)
-        )
+        target_weekday = int(data.weekday) if data.weekday is not None else int(slot.weekday)
         target_start = data.start_time or slot.start_time
         target_end = data.end_time or slot.end_time
 
@@ -318,12 +311,10 @@ class ScheduleService:
                     tzinfo=MOSCOW_TIMEZONE,
                 )
 
-                existing_lesson = (
-                    await schedule_repository.get_lesson_by_slot_and_start(
-                        session,
-                        slot.id,
-                        starts_at,
-                    )
+                existing_lesson = await schedule_repository.get_lesson_by_slot_and_start(
+                    session,
+                    slot.id,
+                    starts_at,
                 )
 
                 if existing_lesson is None:

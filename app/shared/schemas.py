@@ -3,7 +3,6 @@ from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel, ConfigDict, field_serializer
 
-
 MOSCOW_TIMEZONE = ZoneInfo("Europe/Moscow")
 
 

@@ -148,9 +148,7 @@ async def test_create_student_for_inactive_branch(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Нельзя добавить ученика в неактивный филиал"
-    )
+    assert response.json()["detail"] == ("Нельзя добавить ученика в неактивный филиал")
 
 
 async def test_branch_admin_can_create_student_in_own_branch(
@@ -367,12 +365,8 @@ async def test_owner_can_change_student_parent(
 
     assert response.status_code == 200
     assert response.json()["parent"]["id"] == second_parent.id
-    assert response.json()["parent"]["first_name"] == (
-        second_parent.first_name
-    )
-    assert response.json()["parent"]["last_name"] == (
-        second_parent.last_name
-    )
+    assert response.json()["parent"]["first_name"] == (second_parent.first_name)
+    assert response.json()["parent"]["last_name"] == (second_parent.last_name)
     assert response.json()["parent"]["phone"] == second_parent.phone
 
 

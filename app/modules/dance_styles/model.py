@@ -7,8 +7,8 @@ from app.db.base import Base, IdMixin, TimestampMixin
 from app.modules.teachers.model import teacher_dance_styles
 
 if TYPE_CHECKING:
-    from app.modules.teachers.model import Teacher
     from app.modules.groups.model import Group
+    from app.modules.teachers.model import Teacher
 
 
 class DanceStyle(IdMixin, TimestampMixin, Base):

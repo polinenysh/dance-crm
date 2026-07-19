@@ -6,17 +6,18 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base, IdMixin, TimestampMixin
 
 if TYPE_CHECKING:
-    from app.modules.halls.model import Hall
-    from app.modules.students.model import Student
-    from app.modules.users.model import User
     from app.modules.groups.model import Group
+    from app.modules.halls.model import Hall
+    from app.modules.payments.model import Payment
+    from app.modules.students.model import Student
     from app.modules.subscription_plans.model import SubscriptionPlan
     from app.modules.subscriptions.model import StudentSubscription
-    from app.modules.payments.model import Payment
+    from app.modules.users.model import User
 
 
 class Branch(IdMixin, TimestampMixin, Base):
-    '''Модель филиала'''
+    """Модель филиала"""
+
     __tablename__ = "branches"
 
     name: Mapped[str] = mapped_column(
@@ -65,7 +66,7 @@ class Branch(IdMixin, TimestampMixin, Base):
     student_subscriptions: Mapped[list["StudentSubscription"]] = relationship(
         back_populates="branch",
     )
-    
+
     payments: Mapped[list["Payment"]] = relationship(
         back_populates="branch",
     )

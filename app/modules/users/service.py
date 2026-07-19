@@ -104,10 +104,7 @@ class UserService:
                 data.email,
             )
 
-            if (
-                existing_user is not None
-                and existing_user.id != user.id
-            ):
+            if existing_user is not None and existing_user.id != user.id:
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
                     detail="Пользователь с таким email уже существует",

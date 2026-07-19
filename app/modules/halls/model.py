@@ -11,7 +11,8 @@ if TYPE_CHECKING:
 
 
 class Hall(IdMixin, TimestampMixin, Base):
-    '''Модель зала'''
+    """Модель зала"""
+
     __tablename__ = "halls"
     __table_args__ = (
         CheckConstraint(

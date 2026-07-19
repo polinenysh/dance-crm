@@ -109,9 +109,7 @@ async def get_extensions_count(
 ) -> int:
     """Возвращает количество записей о продлении."""
 
-    query = select(
-        func.count(SubscriptionExtension.id)
-    ).where(
+    query = select(func.count(SubscriptionExtension.id)).where(
         SubscriptionExtension.lesson_id == lesson_id,
     )
 
@@ -153,12 +151,8 @@ async def test_studio_cancellation_extends_subscription_by_seven_days(
         subscription_id=subscription_id,
     )
 
-    assert updated_subscription["expires_on"] == (
-        previous_expires_on + timedelta(days=7)
-    )
-    assert updated_subscription["extension_days"] == (
-        previous_extension_days + 7
-    )
+    assert updated_subscription["expires_on"] == (previous_expires_on + timedelta(days=7))
+    assert updated_subscription["extension_days"] == (previous_extension_days + 7)
 
 
 async def test_studio_cancellation_creates_extension_history(
@@ -230,10 +224,7 @@ async def test_cancellation_not_by_studio_does_not_extend_subscription(
     )
 
     assert updated_subscription["expires_on"] == previous_expires_on
-    assert (
-        updated_subscription["extension_days"]
-        == previous_extension_days
-    )
+    assert updated_subscription["extension_days"] == previous_extension_days
 
     extension = await get_extension_data(
         session=session,
@@ -281,12 +272,8 @@ async def test_repeated_cancellation_does_not_extend_twice(
         subscription_id=subscription_id,
     )
 
-    assert updated_subscription["expires_on"] == (
-        previous_expires_on + timedelta(days=7)
-    )
-    assert updated_subscription["extension_days"] == (
-        previous_extension_days + 7
-    )
+    assert updated_subscription["expires_on"] == (previous_expires_on + timedelta(days=7))
+    assert updated_subscription["extension_days"] == (previous_extension_days + 7)
 
     extensions_count = await get_extensions_count(
         session=session,
@@ -329,10 +316,7 @@ async def test_inactive_group_member_subscription_is_not_extended(
     )
 
     assert updated_subscription["expires_on"] == previous_expires_on
-    assert (
-        updated_subscription["extension_days"]
-        == previous_extension_days
-    )
+    assert updated_subscription["extension_days"] == previous_extension_days
 
     extension = await get_extension_data(
         session=session,
@@ -391,12 +375,8 @@ async def test_expired_subscription_is_not_extended(
     lesson_date = lesson.starts_at.date()
     subscription_id = student_subscription.id
 
-    student_subscription.starts_on = (
-        lesson_date - timedelta(days=40)
-    )
-    student_subscription.expires_on = (
-        lesson_date - timedelta(days=1)
-    )
+    student_subscription.starts_on = lesson_date - timedelta(days=40)
+    student_subscription.expires_on = lesson_date - timedelta(days=1)
 
     previous_expires_on = student_subscription.expires_on
     previous_extension_days = student_subscription.extension_days
@@ -417,10 +397,7 @@ async def test_expired_subscription_is_not_extended(
     )
 
     assert updated_subscription["expires_on"] == previous_expires_on
-    assert (
-        updated_subscription["extension_days"]
-        == previous_extension_days
-    )
+    assert updated_subscription["extension_days"] == previous_extension_days
 
     extension = await get_extension_data(
         session=session,
@@ -445,12 +422,8 @@ async def test_future_subscription_is_not_selected_as_current(
     lesson_date = lesson.starts_at.date()
     subscription_id = student_subscription.id
 
-    student_subscription.starts_on = (
-        lesson_date + timedelta(days=1)
-    )
-    student_subscription.expires_on = (
-        lesson_date + timedelta(days=30)
-    )
+    student_subscription.starts_on = lesson_date + timedelta(days=1)
+    student_subscription.expires_on = lesson_date + timedelta(days=30)
 
     previous_starts_on = student_subscription.starts_on
     previous_expires_on = student_subscription.expires_on
@@ -473,10 +446,7 @@ async def test_future_subscription_is_not_selected_as_current(
 
     assert updated_subscription["starts_on"] == previous_starts_on
     assert updated_subscription["expires_on"] == previous_expires_on
-    assert (
-        updated_subscription["extension_days"]
-        == previous_extension_days
-    )
+    assert updated_subscription["extension_days"] == previous_extension_days
 
     extension = await get_extension_data(
         session=session,
@@ -502,9 +472,7 @@ async def test_subscription_is_extended_on_its_start_date(
     subscription_id = student_subscription.id
 
     student_subscription.starts_on = lesson_date
-    student_subscription.expires_on = (
-        lesson_date + timedelta(days=29)
-    )
+    student_subscription.expires_on = lesson_date + timedelta(days=29)
 
     previous_expires_on = student_subscription.expires_on
     previous_extension_days = student_subscription.extension_days
@@ -524,12 +492,8 @@ async def test_subscription_is_extended_on_its_start_date(
         subscription_id=subscription_id,
     )
 
-    assert updated_subscription["expires_on"] == (
-        previous_expires_on + timedelta(days=7)
-    )
-    assert updated_subscription["extension_days"] == (
-        previous_extension_days + 7
-    )
+    assert updated_subscription["expires_on"] == (previous_expires_on + timedelta(days=7))
+    assert updated_subscription["extension_days"] == (previous_extension_days + 7)
 
 
 async def test_subscription_is_extended_on_its_expiration_date(
@@ -546,9 +510,7 @@ async def test_subscription_is_extended_on_its_expiration_date(
     lesson_date = lesson.starts_at.date()
     subscription_id = student_subscription.id
 
-    student_subscription.starts_on = (
-        lesson_date - timedelta(days=29)
-    )
+    student_subscription.starts_on = lesson_date - timedelta(days=29)
     student_subscription.expires_on = lesson_date
 
     previous_extension_days = student_subscription.extension_days
@@ -568,12 +530,8 @@ async def test_subscription_is_extended_on_its_expiration_date(
         subscription_id=subscription_id,
     )
 
-    assert updated_subscription["expires_on"] == (
-        lesson_date + timedelta(days=7)
-    )
-    assert updated_subscription["extension_days"] == (
-        previous_extension_days + 7
-    )
+    assert updated_subscription["expires_on"] == (lesson_date + timedelta(days=7))
+    assert updated_subscription["extension_days"] == (previous_extension_days + 7)
 
 
 async def test_following_subscription_is_shifted_by_seven_days(
@@ -592,12 +550,8 @@ async def test_following_subscription_is_shifted_by_seven_days(
     following_subscription_id = following_student_subscription.id
 
     current_previous_expires_on = student_subscription.expires_on
-    following_previous_starts_on = (
-        following_student_subscription.starts_on
-    )
-    following_previous_expires_on = (
-        following_student_subscription.expires_on
-    )
+    following_previous_starts_on = following_student_subscription.starts_on
+    following_previous_expires_on = following_student_subscription.expires_on
 
     response = await cancel_lesson(
         client=client,
@@ -617,15 +571,9 @@ async def test_following_subscription_is_shifted_by_seven_days(
         subscription_id=following_subscription_id,
     )
 
-    assert updated_current["expires_on"] == (
-        current_previous_expires_on + timedelta(days=7)
-    )
-    assert updated_following["starts_on"] == (
-        following_previous_starts_on + timedelta(days=7)
-    )
-    assert updated_following["expires_on"] == (
-        following_previous_expires_on + timedelta(days=7)
-    )
+    assert updated_current["expires_on"] == (current_previous_expires_on + timedelta(days=7))
+    assert updated_following["starts_on"] == (following_previous_starts_on + timedelta(days=7))
+    assert updated_following["expires_on"] == (following_previous_expires_on + timedelta(days=7))
 
 
 async def test_following_subscription_extension_days_are_not_changed(
@@ -641,9 +589,7 @@ async def test_following_subscription_extension_days_are_not_changed(
 
     lesson_id = lesson.id
     following_subscription_id = following_student_subscription.id
-    previous_extension_days = (
-        following_student_subscription.extension_days
-    )
+    previous_extension_days = following_student_subscription.extension_days
 
     response = await cancel_lesson(
         client=client,
@@ -658,10 +604,7 @@ async def test_following_subscription_extension_days_are_not_changed(
         subscription_id=following_subscription_id,
     )
 
-    assert (
-        updated_following["extension_days"]
-        == previous_extension_days
-    )
+    assert updated_following["extension_days"] == previous_extension_days
 
 
 async def test_all_following_subscriptions_are_shifted(
@@ -686,23 +629,15 @@ async def test_all_following_subscriptions_are_shifted(
     price = student_subscription.price
 
     second_id = following_student_subscription.id
-    second_previous_starts_on = (
-        following_student_subscription.starts_on
-    )
-    second_previous_expires_on = (
-        following_student_subscription.expires_on
-    )
+    second_previous_starts_on = following_student_subscription.starts_on
+    second_previous_expires_on = following_student_subscription.expires_on
 
     third_subscription = StudentSubscription(
         student_id=student_id,
         plan_id=plan_id,
         branch_id=branch_id,
-        starts_on=(
-            second_previous_expires_on + timedelta(days=1)
-        ),
-        expires_on=(
-            second_previous_expires_on + timedelta(days=30)
-        ),
+        starts_on=(second_previous_expires_on + timedelta(days=1)),
+        expires_on=(second_previous_expires_on + timedelta(days=30)),
         lessons_count=lessons_count,
         price=price,
         extension_days=0,
@@ -736,18 +671,10 @@ async def test_all_following_subscriptions_are_shifted(
         subscription_id=third_id,
     )
 
-    assert updated_second["starts_on"] == (
-        second_previous_starts_on + timedelta(days=7)
-    )
-    assert updated_second["expires_on"] == (
-        second_previous_expires_on + timedelta(days=7)
-    )
-    assert updated_third["starts_on"] == (
-        third_previous_starts_on + timedelta(days=7)
-    )
-    assert updated_third["expires_on"] == (
-        third_previous_expires_on + timedelta(days=7)
-    )
+    assert updated_second["starts_on"] == (second_previous_starts_on + timedelta(days=7))
+    assert updated_second["expires_on"] == (second_previous_expires_on + timedelta(days=7))
+    assert updated_third["starts_on"] == (third_previous_starts_on + timedelta(days=7))
+    assert updated_third["expires_on"] == (third_previous_expires_on + timedelta(days=7))
 
 
 async def test_subscription_from_other_branch_is_not_extended(
@@ -784,10 +711,7 @@ async def test_subscription_from_other_branch_is_not_extended(
     )
 
     assert updated_subscription["expires_on"] == previous_expires_on
-    assert (
-        updated_subscription["extension_days"]
-        == previous_extension_days
-    )
+    assert updated_subscription["extension_days"] == previous_extension_days
 
     extension = await get_extension_data(
         session=session,
@@ -815,16 +739,10 @@ async def test_multiple_students_receive_extensions(
     second_subscription_id = second_student_subscription.id
 
     first_previous_expires_on = student_subscription.expires_on
-    second_previous_expires_on = (
-        second_student_subscription.expires_on
-    )
+    second_previous_expires_on = second_student_subscription.expires_on
 
-    first_previous_extension_days = (
-        student_subscription.extension_days
-    )
-    second_previous_extension_days = (
-        second_student_subscription.extension_days
-    )
+    first_previous_extension_days = student_subscription.extension_days
+    second_previous_extension_days = second_student_subscription.extension_days
 
     response = await cancel_lesson(
         client=client,
@@ -844,19 +762,11 @@ async def test_multiple_students_receive_extensions(
         subscription_id=second_subscription_id,
     )
 
-    assert updated_first["expires_on"] == (
-        first_previous_expires_on + timedelta(days=7)
-    )
-    assert updated_second["expires_on"] == (
-        second_previous_expires_on + timedelta(days=7)
-    )
+    assert updated_first["expires_on"] == (first_previous_expires_on + timedelta(days=7))
+    assert updated_second["expires_on"] == (second_previous_expires_on + timedelta(days=7))
 
-    assert updated_first["extension_days"] == (
-        first_previous_extension_days + 7
-    )
-    assert updated_second["extension_days"] == (
-        second_previous_extension_days + 7
-    )
+    assert updated_first["extension_days"] == (first_previous_extension_days + 7)
+    assert updated_second["extension_days"] == (second_previous_extension_days + 7)
 
     extensions_count = await get_extensions_count(
         session=session,
@@ -891,9 +801,7 @@ async def test_completed_lesson_cannot_be_cancelled_or_extended(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Нельзя отменить завершённое занятие"
-    )
+    assert response.json()["detail"] == ("Нельзя отменить завершённое занятие")
 
     updated_subscription = await get_subscription_data(
         session=session,
@@ -901,10 +809,7 @@ async def test_completed_lesson_cannot_be_cancelled_or_extended(
     )
 
     assert updated_subscription["expires_on"] == previous_expires_on
-    assert (
-        updated_subscription["extension_days"]
-        == previous_extension_days
-    )
+    assert updated_subscription["extension_days"] == previous_extension_days
 
     extension = await get_extension_data(
         session=session,
@@ -946,12 +851,8 @@ async def test_branch_admin_can_cancel_and_extend_subscription(
         subscription_id=subscription_id,
     )
 
-    assert updated_subscription["expires_on"] == (
-        previous_expires_on + timedelta(days=7)
-    )
-    assert updated_subscription["extension_days"] == (
-        previous_extension_days + 7
-    )
+    assert updated_subscription["expires_on"] == (previous_expires_on + timedelta(days=7))
+    assert updated_subscription["extension_days"] == (previous_extension_days + 7)
 
     extension = await get_extension_data(
         session=session,

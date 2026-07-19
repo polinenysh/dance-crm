@@ -22,14 +22,10 @@ class UserCreate(BaseModel):
         """Проверяет соответствие роли и филиала."""
 
         if self.role == UserRole.BRANCH_ADMIN and self.branch_id is None:
-            raise ValueError(
-                "Для администратора необходимо указать филиал"
-            )
+            raise ValueError("Для администратора необходимо указать филиал")
 
         if self.role == UserRole.OWNER and self.branch_id is not None:
-            raise ValueError(
-                "Руководитель не должен быть привязан к филиалу"
-            )
+            raise ValueError("Руководитель не должен быть привязан к филиалу")
 
         return self
 

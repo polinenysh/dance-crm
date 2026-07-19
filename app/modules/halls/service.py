@@ -13,8 +13,7 @@ from app.shared.enums import UserRole
 class HallService:
     """Сервис бизнес-логики залов."""
 
-    async def get_all(self, session: AsyncSession, current_user: User,
-                      branch_id: int | None = None) -> list[Hall]:
+    async def get_all(self, session: AsyncSession, current_user: User, branch_id: int | None = None) -> list[Hall]:
         """Возвращает доступные сотруднику залы."""
         if current_user.role == UserRole.BRANCH_ADMIN:
             branch_id = current_user.branch_id
@@ -29,8 +28,7 @@ class HallService:
             raise HTTPException(status_code=404, detail="Филиал не найден")
         return branch
 
-    async def get_by_id(self, session: AsyncSession, hall_id: int,
-                        current_user: User) -> Hall:
+    async def get_by_id(self, session: AsyncSession, hall_id: int, current_user: User) -> Hall:
         """Возвращает зал с проверкой доступа."""
         hall = await hall_repository.get_by_id(session, hall_id)
         if hall is None:
@@ -38,8 +36,7 @@ class HallService:
         ensure_branch_access(current_user, hall.branch_id)
         return hall
 
-    async def create(self, session: AsyncSession, data: HallCreate,
-                     current_user: User) -> Hall:
+    async def create(self, session: AsyncSession, data: HallCreate, current_user: User) -> Hall:
         """Создаёт зал в доступном филиале."""
         ensure_branch_access(current_user, data.branch_id)
         branch = await self._get_branch(session, data.branch_id)
@@ -50,8 +47,7 @@ class HallService:
             raise HTTPException(status_code=409, detail="В этом филиале уже есть зал с таким названием")
         return await hall_repository.create(session, data)
 
-    async def update(self, session: AsyncSession, hall_id: int, data: HallUpdate,
-                     current_user: User) -> Hall:
+    async def update(self, session: AsyncSession, hall_id: int, data: HallUpdate, current_user: User) -> Hall:
         """Обновляет зал с проверкой старого и нового филиала."""
         hall = await self.get_by_id(session, hall_id, current_user)
         target_branch_id = data.branch_id if data.branch_id is not None else hall.branch_id

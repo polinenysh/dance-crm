@@ -138,9 +138,7 @@ async def test_dashboard_combines_all_reports() -> None:
         "cancelled_lessons": 1,
         "groups": [(1, "Группа", 2, 10, 8)],
     }
-    repository.groups.return_value = [
-        (1, "Группа", 1, "Центральный", 1, "Мария", "Иванова", 20, True, 10)
-    ]
+    repository.groups.return_value = [(1, "Группа", 1, "Центральный", 1, "Мария", "Иванова", 20, True, 10)]
     repository.group_students_count.return_value = 10
     repository.subscriptions.return_value = {
         "active": 7,

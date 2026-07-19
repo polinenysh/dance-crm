@@ -23,9 +23,7 @@ class ScheduleSlotCreate(BaseModel):
         """Проверяет время начала и окончания занятия."""
 
         if self.start_time >= self.end_time:
-            raise ValueError(
-                "Время окончания должно быть позже времени начала"
-            )
+            raise ValueError("Время окончания должно быть позже времени начала")
 
         return self
 
@@ -65,14 +63,10 @@ class LessonGenerateRequest(BaseModel):
         """Проверяет диапазон генерации занятий."""
 
         if self.date_from > self.date_to:
-            raise ValueError(
-                "Начальная дата не может быть позже конечной"
-            )
+            raise ValueError("Начальная дата не может быть позже конечной")
 
         if (self.date_to - self.date_from).days > 93:
-            raise ValueError(
-                "За один запрос можно создать занятия максимум на 93 дня"
-            )
+            raise ValueError("За один запрос можно создать занятия максимум на 93 дня")
 
         return self
 
@@ -101,9 +95,7 @@ class LessonRescheduleRequest(BaseModel):
         """Проверяет время перенесённого занятия."""
 
         if self.starts_at >= self.ends_at:
-            raise ValueError(
-                "Окончание занятия должно быть позже начала"
-            )
+            raise ValueError("Окончание занятия должно быть позже начала")
 
         return self
 

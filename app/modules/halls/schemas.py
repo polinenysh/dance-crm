@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 from app.shared.schemas import ResponseSchema
 
+
 class HallBase(BaseModel):
     """Общие поля зала."""
 

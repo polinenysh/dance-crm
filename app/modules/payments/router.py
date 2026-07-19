@@ -18,10 +18,9 @@ from app.modules.payments.schemas import (
 )
 from app.modules.users.model import User
 
-
 router = APIRouter(
     prefix="/payments",
-    tags=["Оплаты"],
+    tags=["Payments"],
 )
 
 

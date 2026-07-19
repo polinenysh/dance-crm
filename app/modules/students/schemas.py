@@ -31,9 +31,7 @@ class StudentBase(BaseModel):
         """Проверяет, что дата рождения не находится в будущем."""
 
         if value is not None and value > date.today():
-            raise ValueError(
-                "Дата рождения не может находиться в будущем"
-            )
+            raise ValueError("Дата рождения не может находиться в будущем")
 
         return value
 
@@ -73,9 +71,7 @@ class StudentUpdate(BaseModel):
         """Проверяет дату рождения при обновлении ученика."""
 
         if value is not None and value > date.today():
-            raise ValueError(
-                "Дата рождения не может находиться в будущем"
-            )
+            raise ValueError("Дата рождения не может находиться в будущем")
 
         return value
 

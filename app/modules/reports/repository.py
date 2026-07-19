@@ -154,12 +154,8 @@ class ReportRepository:
             .join(Group, Group.id == Lesson.group_id)
             .where(*lesson_filters, Lesson.status == LessonStatus.CANCELLED)
         )
-        completed_lessons = int(
-            (await session.execute(completed_count_stmt)).scalar_one()
-        )
-        cancelled_lessons = int(
-            (await session.execute(cancelled_count_stmt)).scalar_one()
-        )
+        completed_lessons = int((await session.execute(completed_count_stmt)).scalar_one())
+        cancelled_lessons = int((await session.execute(cancelled_count_stmt)).scalar_one())
 
         expected_subquery = (
             select(
@@ -173,8 +169,7 @@ class ReportRepository:
                 and_(
                     GroupMembership.group_id == Lesson.group_id,
                     GroupMembership.joined_at <= Lesson.starts_at,
-                    (GroupMembership.left_at.is_(None))
-                    | (GroupMembership.left_at > Lesson.starts_at),
+                    (GroupMembership.left_at.is_(None)) | (GroupMembership.left_at > Lesson.starts_at),
                 ),
             )
             .where(*lesson_filters, Lesson.status == LessonStatus.COMPLETED)
@@ -268,11 +263,7 @@ class ReportRepository:
                     )
                 )
             ),
-            func.count(
-                case(
-                    (func.coalesce(payment_count.c.completed_payments, 0) == 0, 1)
-                )
-            ),
+            func.count(case((func.coalesce(payment_count.c.completed_payments, 0) == 0, 1))),
         ).outerjoin(
             payment_count,
             payment_count.c.subscription_id == StudentSubscription.id,

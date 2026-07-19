@@ -39,9 +39,7 @@ class ReportService:
         date_to: date,
         branch_id: int | None,
     ) -> RevenueReport:
-        data = await self.repository.revenue(
-            session, date_from, date_to, branch_id
-        )
+        data = await self.repository.revenue(session, date_from, date_to, branch_id)
         return RevenueReport(
             period=ReportPeriod(date_from=date_from, date_to=date_to),
             total=data["total"],
@@ -96,9 +94,7 @@ class ReportService:
                 )
             )
 
-        unique_students = await self.repository.group_students_count(
-            session, branch_id
-        )
+        unique_students = await self.repository.group_students_count(session, branch_id)
         return GroupsReport(
             groups_count=len(items),
             active_groups_count=sum(item.is_active for item in items),
@@ -114,9 +110,7 @@ class ReportService:
         date_to: date,
         branch_id: int | None,
     ) -> AttendanceReport:
-        data = await self.repository.attendance(
-            session, date_from, date_to, branch_id
-        )
+        data = await self.repository.attendance(session, date_from, date_to, branch_id)
         groups: list[GroupAttendanceItem] = []
         expected_total = 0
         actual_total = 0
@@ -198,12 +192,8 @@ class ReportService:
         branch_id: int | None,
         expiring_within_days: int,
     ) -> DashboardReport:
-        revenue = await self.get_revenue(
-            session, date_from, date_to, branch_id
-        )
-        attendance = await self.get_attendance(
-            session, date_from, date_to, branch_id
-        )
+        revenue = await self.get_revenue(session, date_from, date_to, branch_id)
+        attendance = await self.get_attendance(session, date_from, date_to, branch_id)
         groups = await self.get_groups(session, branch_id)
         subscriptions = await self.get_subscriptions(
             session,
@@ -211,9 +201,7 @@ class ReportService:
             expiring_within_days,
             include_all=False,
         )
-        active_students = await self.repository.active_students_count(
-            session, branch_id
-        )
+        active_students = await self.repository.active_students_count(session, branch_id)
         return DashboardReport(
             period=ReportPeriod(date_from=date_from, date_to=date_to),
             branch_id=branch_id,
@@ -221,9 +209,7 @@ class ReportService:
             active_students=active_students,
             active_subscriptions=subscriptions.active,
             average_attendance_percent=attendance.average_attendance_percent,
-            average_group_occupancy_percent=(
-                groups.average_occupancy_percent
-            ),
+            average_group_occupancy_percent=(groups.average_occupancy_percent),
             expiring_subscriptions=subscriptions.expiring_soon,
             unpaid_subscriptions=subscriptions.unpaid,
             cancelled_lessons=attendance.cancelled_lessons,

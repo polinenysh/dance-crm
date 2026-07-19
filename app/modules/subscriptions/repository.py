@@ -35,10 +35,7 @@ class StudentSubscriptionRepository:
     ) -> list[StudentSubscription]:
         """Возвращает абонементы с фильтрацией."""
 
-        query: Select[tuple[StudentSubscription]] = (
-            select(StudentSubscription)
-            .options(*self.related_options())
-        )
+        query: Select[tuple[StudentSubscription]] = select(StudentSubscription).options(*self.related_options())
 
         if branch_id is not None:
             query = query.where(
@@ -116,7 +113,7 @@ class StudentSubscriptionRepository:
         )
 
         return result.first()
-    
+
     async def get_valid_on_date(
         self,
         session: AsyncSession,
@@ -144,7 +141,6 @@ class StudentSubscriptionRepository:
 
         return result.first()
 
-
     async def get_following_subscriptions(
         self,
         session: AsyncSession,
@@ -168,7 +164,6 @@ class StudentSubscriptionRepository:
         )
 
         return list(result.all())
-
 
     async def get_extension_by_lesson(
         self,

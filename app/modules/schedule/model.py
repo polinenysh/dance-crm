@@ -18,12 +18,12 @@ from app.db.base import Base, IdMixin, TimestampMixin
 from app.shared.enums import LessonStatus, Weekday
 
 if TYPE_CHECKING:
+    from app.modules.attendance.model import Attendance
     from app.modules.groups.model import Group
     from app.modules.halls.model import Hall
+    from app.modules.subscriptions.model import SubscriptionExtension
     from app.modules.teachers.model import Teacher
     from app.modules.users.model import User
-    from app.modules.attendance.model import Attendance
-    from app.modules.subscriptions.model import SubscriptionExtension
 
 
 class ScheduleSlot(IdMixin, TimestampMixin, Base):
@@ -171,9 +171,7 @@ class Lesson(IdMixin, TimestampMixin, Base):
         Enum(
             LessonStatus,
             name="lesson_status",
-            values_callable=lambda enum_class: [
-                item.value for item in enum_class
-            ],
+            values_callable=lambda enum_class: [item.value for item in enum_class],
         ),
         default=LessonStatus.PLANNED,
         server_default=LessonStatus.PLANNED.value,

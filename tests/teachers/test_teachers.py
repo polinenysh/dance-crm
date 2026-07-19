@@ -1,5 +1,3 @@
-from typing import Any
-
 from httpx import AsyncClient
 
 from app.modules.dance_styles.model import DanceStyle

@@ -84,7 +84,7 @@ class AuthService:
 
             user_id = int(subject)
 
-        except (jwt.InvalidTokenError, ValueError):
+        except jwt.InvalidTokenError, ValueError:
             raise credentials_exception from None
 
         user = await user_repository.get_by_id(

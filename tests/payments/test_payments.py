@@ -9,10 +9,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.branches.model import Branch
 from app.modules.payments.enums import PaymentMethod, PaymentStatus
 from app.modules.payments.model import Payment
-from app.modules.subscriptions.model import StudentSubscription
 from app.modules.students.model import Student
+from app.modules.subscriptions.model import StudentSubscription
 from app.modules.users.model import User
-
 
 PAYMENTS_URL = "/api/v1/payments"
 
@@ -302,9 +301,7 @@ async def test_payment_uses_current_time_when_paid_at_is_missing(
 
     assert response.status_code == 201
 
-    paid_at = datetime.fromisoformat(
-        response.json()["paid_at"].replace("Z", "+00:00")
-    )
+    paid_at = datetime.fromisoformat(response.json()["paid_at"].replace("Z", "+00:00"))
 
     assert before_request <= paid_at <= after_request
 
@@ -451,9 +448,7 @@ async def test_subscription_must_belong_to_student(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Абонемент принадлежит другому ученику"
-    )
+    assert response.json()["detail"] == ("Абонемент принадлежит другому ученику")
 
 
 async def test_student_must_belong_to_selected_branch(
@@ -473,9 +468,7 @@ async def test_student_must_belong_to_selected_branch(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Ученик относится к другому филиалу"
-    )
+    assert response.json()["detail"] == ("Ученик относится к другому филиалу")
 
 
 async def test_branch_admin_can_create_payment_in_own_branch(
@@ -532,9 +525,7 @@ async def test_branch_admin_cannot_create_payment_in_other_branch(
     )
 
     assert response.status_code == 403
-    assert response.json()["detail"] == (
-        "Нет доступа к этому филиалу"
-    )
+    assert response.json()["detail"] == ("Нет доступа к этому филиалу")
 
 
 async def test_owner_can_get_payment(
@@ -673,10 +664,7 @@ async def test_completed_payment_can_be_cancelled(
     assert response_data["status"] == "cancelled"
     assert response_data["cancelled_by"] == owner_id
     assert response_data["cancelled_at"] is not None
-    assert (
-        response_data["cancellation_reason"]
-        == "Оплата была добавлена дважды"
-    )
+    assert response_data["cancellation_reason"] == "Оплата была добавлена дважды"
 
     stored_payment = await get_payment_data(
         session=session,
@@ -686,10 +674,7 @@ async def test_completed_payment_can_be_cancelled(
     assert stored_payment["status"] == PaymentStatus.CANCELLED
     assert stored_payment["cancelled_by"] == owner_id
     assert stored_payment["cancelled_at"] is not None
-    assert (
-        stored_payment["cancellation_reason"]
-        == "Оплата была добавлена дважды"
-    )
+    assert stored_payment["cancellation_reason"] == "Оплата была добавлена дважды"
 
 
 async def test_payment_cannot_be_cancelled_twice(
@@ -720,9 +705,7 @@ async def test_payment_cannot_be_cancelled_twice(
     )
 
     assert second_response.status_code == 409
-    assert second_response.json()["detail"] == (
-        "Оплата уже отменена"
-    )
+    assert second_response.json()["detail"] == ("Оплата уже отменена")
 
 
 async def test_cancelled_payment_cannot_be_updated(
@@ -753,9 +736,7 @@ async def test_cancelled_payment_cannot_be_updated(
     )
 
     assert update_response.status_code == 409
-    assert update_response.json()["detail"] == (
-        "Можно изменять только проведённую оплату"
-    )
+    assert update_response.json()["detail"] == ("Можно изменять только проведённую оплату")
 
 
 async def test_completed_payment_can_be_refunded(
@@ -785,10 +766,7 @@ async def test_completed_payment_can_be_refunded(
     assert response_data["status"] == "refunded"
     assert response_data["refunded_by"] == owner_id
     assert response_data["refunded_at"] is not None
-    assert (
-        response_data["refund_reason"]
-        == "Клиент отказался от занятий"
-    )
+    assert response_data["refund_reason"] == "Клиент отказался от занятий"
 
     stored_payment = await get_payment_data(
         session=session,
@@ -798,10 +776,7 @@ async def test_completed_payment_can_be_refunded(
     assert stored_payment["status"] == PaymentStatus.REFUNDED
     assert stored_payment["refunded_by"] == owner_id
     assert stored_payment["refunded_at"] is not None
-    assert (
-        stored_payment["refund_reason"]
-        == "Клиент отказался от занятий"
-    )
+    assert stored_payment["refund_reason"] == "Клиент отказался от занятий"
 
 
 async def test_payment_cannot_be_refunded_twice(
@@ -832,9 +807,7 @@ async def test_payment_cannot_be_refunded_twice(
     )
 
     assert second_response.status_code == 409
-    assert second_response.json()["detail"] == (
-        "Оплата уже возвращена"
-    )
+    assert second_response.json()["detail"] == ("Оплата уже возвращена")
 
 
 async def test_cancelled_payment_cannot_be_refunded(
@@ -865,9 +838,7 @@ async def test_cancelled_payment_cannot_be_refunded(
     )
 
     assert refund_response.status_code == 409
-    assert refund_response.json()["detail"] == (
-        "Отменённую оплату нельзя вернуть"
-    )
+    assert refund_response.json()["detail"] == ("Отменённую оплату нельзя вернуть")
 
 
 async def test_refunded_payment_cannot_be_cancelled(
@@ -898,9 +869,7 @@ async def test_refunded_payment_cannot_be_cancelled(
     )
 
     assert cancel_response.status_code == 409
-    assert cancel_response.json()["detail"] == (
-        "Возвращённую оплату нельзя отменить"
-    )
+    assert cancel_response.json()["detail"] == ("Возвращённую оплату нельзя отменить")
 
 
 async def test_list_payments_can_be_filtered_by_student(
@@ -926,10 +895,7 @@ async def test_list_payments_can_be_filtered_by_student(
     response_data = response.json()
 
     assert response_data["total"] >= 1
-    assert all(
-        item["student_id"] == student_id
-        for item in response_data["items"]
-    )
+    assert all(item["student_id"] == student_id for item in response_data["items"])
 
 
 async def test_list_payments_can_be_filtered_by_status(
@@ -964,10 +930,7 @@ async def test_list_payments_can_be_filtered_by_status(
     response_data = response.json()
 
     assert response_data["total"] >= 1
-    assert all(
-        item["status"] == "cancelled"
-        for item in response_data["items"]
-    )
+    assert all(item["status"] == "cancelled" for item in response_data["items"])
 
 
 async def test_payment_list_has_pagination(
@@ -1014,10 +977,7 @@ async def test_branch_admin_sees_only_own_branch_payments(
 
     response_data = response.json()
 
-    assert all(
-        item["branch_id"] == branch_id
-        for item in response_data["items"]
-    )
+    assert all(item["branch_id"] == branch_id for item in response_data["items"])
 
 
 async def test_summary_contains_payment_amounts_and_counts(

@@ -11,8 +11,13 @@ from app.modules.teachers.schemas import TeacherCreate, TeacherUpdate
 class TeacherService:
     """Сервис бизнес-логики преподавателей."""
 
-    async def get_all(self, session: AsyncSession, dance_style_id: int | None = None,
-                      active_only: bool = False, search: str | None = None) -> list[Teacher]:
+    async def get_all(
+        self,
+        session: AsyncSession,
+        dance_style_id: int | None = None,
+        active_only: bool = False,
+        search: str | None = None,
+    ) -> list[Teacher]:
         """Возвращает список преподавателей."""
         return await teacher_repository.get_all(session, dance_style_id, active_only, search)
 

@@ -1,11 +1,12 @@
-from zoneinfo import ZoneInfo
-
 from datetime import date, timedelta
+from zoneinfo import ZoneInfo
 
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.auth.dependencies import ensure_branch_access
+from app.modules.groups.repository import group_repository
+from app.modules.schedule.model import Lesson
 from app.modules.students.repository import student_repository
 from app.modules.subscription_plans.repository import (
     subscription_plan_repository,
@@ -23,9 +24,6 @@ from app.modules.subscriptions.schemas import (
     SubscriptionExtensionCreate,
 )
 from app.modules.users.model import User
-from app.modules.groups.repository import group_repository
-from app.modules.schedule.model import Lesson
-
 from app.shared.enums import StudentStatus, UserRole
 
 
@@ -138,32 +136,24 @@ class StudentSubscriptionService:
         if plan.branch_id != student.branch_id:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=(
-                    "Ученик и тип абонемента относятся "
-                    "к разным филиалам"
-                ),
+                detail=("Ученик и тип абонемента относятся " "к разным филиалам"),
             )
 
         expires_on = self.calculate_expiration_date(
             data.starts_on,
         )
 
-        overlapping_subscription = (
-            await student_subscription_repository.find_overlapping(
-                session=session,
-                student_id=student.id,
-                starts_on=data.starts_on,
-                expires_on=expires_on,
-            )
+        overlapping_subscription = await student_subscription_repository.find_overlapping(
+            session=session,
+            student_id=student.id,
+            starts_on=data.starts_on,
+            expires_on=expires_on,
         )
 
         if overlapping_subscription is not None:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=(
-                    "У ученика уже есть абонемент, "
-                    "действующий в выбранный период"
-                ),
+                detail=("У ученика уже есть абонемент, " "действующий в выбранный период"),
             )
 
         subscription = StudentSubscription(
@@ -182,11 +172,9 @@ class StudentSubscriptionService:
         session.add(subscription)
         await session.commit()
 
-        created_subscription = (
-            await student_subscription_repository.get_by_id(
-                session,
-                subscription.id,
-            )
+        created_subscription = await student_subscription_repository.get_by_id(
+            session,
+            subscription.id,
         )
 
         if created_subscription is None:
@@ -213,28 +201,22 @@ class StudentSubscriptionService:
         )
 
         if data.starts_on is not None:
-            new_expires_on = (
-                self.calculate_expiration_date(data.starts_on)
-                + timedelta(days=subscription.extension_days)
+            new_expires_on = self.calculate_expiration_date(data.starts_on) + timedelta(
+                days=subscription.extension_days
             )
 
-            overlapping_subscription = (
-                await student_subscription_repository.find_overlapping(
-                    session=session,
-                    student_id=subscription.student_id,
-                    starts_on=data.starts_on,
-                    expires_on=new_expires_on,
-                    excluded_subscription_id=subscription.id,
-                )
+            overlapping_subscription = await student_subscription_repository.find_overlapping(
+                session=session,
+                student_id=subscription.student_id,
+                starts_on=data.starts_on,
+                expires_on=new_expires_on,
+                excluded_subscription_id=subscription.id,
             )
 
             if overlapping_subscription is not None:
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
-                    detail=(
-                        "У ученика уже есть абонемент, "
-                        "действующий в выбранный период"
-                    ),
+                    detail=("У ученика уже есть абонемент, " "действующий в выбранный период"),
                 )
 
             subscription.starts_on = data.starts_on
@@ -245,11 +227,9 @@ class StudentSubscriptionService:
 
         await session.commit()
 
-        updated_subscription = (
-            await student_subscription_repository.get_by_id(
-                session,
-                subscription.id,
-            )
+        updated_subscription = await student_subscription_repository.get_by_id(
+            session,
+            subscription.id,
         )
 
         if updated_subscription is None:
@@ -279,23 +259,18 @@ class StudentSubscriptionService:
             days=data.days,
         )
 
-        overlapping_subscription = (
-            await student_subscription_repository.find_overlapping(
-                session=session,
-                student_id=subscription.student_id,
-                starts_on=subscription.starts_on,
-                expires_on=new_expires_on,
-                excluded_subscription_id=subscription.id,
-            )
+        overlapping_subscription = await student_subscription_repository.find_overlapping(
+            session=session,
+            student_id=subscription.student_id,
+            starts_on=subscription.starts_on,
+            expires_on=new_expires_on,
+            excluded_subscription_id=subscription.id,
         )
 
         if overlapping_subscription is not None:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=(
-                    "Продление пересекается с другим "
-                    "абонементом ученика"
-                ),
+                detail=("Продление пересекается с другим " "абонементом ученика"),
             )
 
         subscription.expires_on = new_expires_on
@@ -303,11 +278,9 @@ class StudentSubscriptionService:
 
         await session.commit()
 
-        extended_subscription = (
-            await student_subscription_repository.get_by_id(
-                session,
-                subscription.id,
-            )
+        extended_subscription = await student_subscription_repository.get_by_id(
+            session,
+            subscription.id,
         )
 
         if extended_subscription is None:
@@ -317,7 +290,7 @@ class StudentSubscriptionService:
             )
 
         return extended_subscription
-    
+
     async def extend_for_cancelled_lesson(
         self,
         session: AsyncSession,
@@ -336,24 +309,20 @@ class StudentSubscriptionService:
         extensions_count = 0
 
         for student_id in student_ids:
-            subscription = (
-                await student_subscription_repository.get_valid_on_date(
-                    session=session,
-                    student_id=student_id,
-                    branch_id=lesson.group.branch_id,
-                    target_date=lesson_date,
-                )
+            subscription = await student_subscription_repository.get_valid_on_date(
+                session=session,
+                student_id=student_id,
+                branch_id=lesson.group.branch_id,
+                target_date=lesson_date,
             )
 
             if subscription is None:
                 continue
 
-            existing_extension = (
-                await student_subscription_repository.get_extension_by_lesson(
-                    session=session,
-                    subscription_id=subscription.id,
-                    lesson_id=lesson.id,
-                )
+            existing_extension = await student_subscription_repository.get_extension_by_lesson(
+                session=session,
+                subscription_id=subscription.id,
+                lesson_id=lesson.id,
             )
 
             if existing_extension is not None:
@@ -370,7 +339,6 @@ class StudentSubscriptionService:
 
         return extensions_count
 
-
     async def apply_automatic_extension(
         self,
         session: AsyncSession,
@@ -383,13 +351,11 @@ class StudentSubscriptionService:
         days = self.AUTOMATIC_EXTENSION_DAYS
         previous_expires_on = subscription.expires_on
 
-        following_subscriptions = (
-            await student_subscription_repository.get_following_subscriptions(
-                session=session,
-                student_id=subscription.student_id,
-                after_date=previous_expires_on,
-                excluded_subscription_id=subscription.id,
-            )
+        following_subscriptions = await student_subscription_repository.get_following_subscriptions(
+            session=session,
+            student_id=subscription.student_id,
+            after_date=previous_expires_on,
+            excluded_subscription_id=subscription.id,
         )
 
         subscription.expires_on += timedelta(days=days)

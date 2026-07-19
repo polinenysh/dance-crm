@@ -160,9 +160,7 @@ async def test_cannot_create_duplicate_group_in_branch(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Группа с таким названием уже существует в филиале"
-    )
+    assert response.json()["detail"] == ("Группа с таким названием уже существует в филиале")
 
 
 async def test_same_group_name_allowed_in_different_branches(
@@ -265,9 +263,7 @@ async def test_teacher_must_teach_group_dance_style(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Преподаватель не ведёт выбранное направление"
-    )
+    assert response.json()["detail"] == ("Преподаватель не ведёт выбранное направление")
 
 
 async def test_owner_can_get_group(
@@ -481,10 +477,12 @@ async def test_cannot_reduce_capacity_below_current_students_count(
         left_at=None,
     )
 
-    session.add_all([
-        first_membership,
-        second_membership,
-    ])
+    session.add_all(
+        [
+            first_membership,
+            second_membership,
+        ]
+    )
     await session.commit()
 
     response = await client.patch(
@@ -495,8 +493,7 @@ async def test_cannot_reduce_capacity_below_current_students_count(
 
     assert response.status_code == 409
     assert response.json()["detail"] == (
-        "Максимальное количество учеников не может быть "
-        "меньше текущего состава группы"
+        "Максимальное количество учеников не может быть " "меньше текущего состава группы"
     )
 
 
@@ -521,12 +518,8 @@ async def test_owner_can_add_student_to_group(
     assert data["students_count"] == 1
     assert len(data["students"]) == 1
     assert data["students"][0]["student"]["id"] == student.id
-    assert data["students"][0]["student"]["first_name"] == (
-        student.first_name
-    )
-    assert data["students"][0]["student"]["last_name"] == (
-        student.last_name
-    )
+    assert data["students"][0]["student"]["first_name"] == (student.first_name)
+    assert data["students"][0]["student"]["last_name"] == (student.last_name)
     assert data["students"][0]["membership_id"] > 0
     assert "joined_at" in data["students"][0]
 
@@ -565,9 +558,7 @@ async def test_cannot_add_student_twice(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Ученик уже состоит в этой группе"
-    )
+    assert response.json()["detail"] == ("Ученик уже состоит в этой группе")
 
 
 async def test_cannot_add_nonexistent_student(
@@ -602,9 +593,7 @@ async def test_cannot_add_inactive_student(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "В группу можно добавить только активного ученика"
-    )
+    assert response.json()["detail"] == ("В группу можно добавить только активного ученика")
 
 
 async def test_cannot_add_student_from_other_branch(
@@ -622,9 +611,7 @@ async def test_cannot_add_student_from_other_branch(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Ученик и группа относятся к разным филиалам"
-    )
+    assert response.json()["detail"] == ("Ученик и группа относятся к разным филиалам")
 
 
 async def test_cannot_add_student_to_inactive_group(
@@ -646,9 +633,7 @@ async def test_cannot_add_student_to_inactive_group(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Нельзя добавить ученика в неактивную группу"
-    )
+    assert response.json()["detail"] == ("Нельзя добавить ученика в неактивную группу")
 
 
 async def test_cannot_add_student_when_group_is_full(
@@ -680,9 +665,7 @@ async def test_cannot_add_student_when_group_is_full(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "В группе достигнуто максимальное число учеников"
-    )
+    assert response.json()["detail"] == ("В группе достигнуто максимальное число учеников")
 
 
 async def test_owner_can_remove_student_from_group(
@@ -744,9 +727,7 @@ async def test_cannot_remove_student_not_in_group(
     )
 
     assert response.status_code == 404
-    assert response.json()["detail"] == (
-        "Ученик не состоит в этой группе"
-    )
+    assert response.json()["detail"] == ("Ученик не состоит в этой группе")
 
 
 async def test_student_can_be_added_again_after_removal(
@@ -773,6 +754,4 @@ async def test_student_can_be_added_again_after_removal(
 
     assert add_response.status_code == 200
     assert add_response.json()["students_count"] == 1
-    assert add_response.json()["students"][0]["student"]["id"] == (
-        student.id
-    )
+    assert add_response.json()["students"][0]["student"]["id"] == (student.id)

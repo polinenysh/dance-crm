@@ -29,8 +29,9 @@ class AttendanceService:
         ensure_branch_access(current_user, lesson.group.branch_id)
         return lesson
 
-    async def get_lesson_attendance(self, session: AsyncSession, lesson_id: int,
-                                    current_user: User) -> LessonAttendanceResponse:
+    async def get_lesson_attendance(
+        self, session: AsyncSession, lesson_id: int, current_user: User
+    ) -> LessonAttendanceResponse:
         """Возвращает текущий список присутствующих."""
         await self.get_lesson(session, lesson_id, current_user)
         items = await attendance_repository.get_by_lesson(session, lesson_id)
@@ -47,7 +48,9 @@ class AttendanceService:
             if lesson.completed_at is None:
                 raise HTTPException(status_code=409, detail="У занятия отсутствует время завершения")
             if now > lesson.completed_at + EDIT_WINDOW:
-                raise HTTPException(status_code=409, detail="Посещаемость можно исправлять только в течение 2 часов после завершения")
+                raise HTTPException(
+                    status_code=409, detail="Посещаемость можно исправлять только в течение 2 часов после завершения"
+                )
 
     async def validate_student(self, session: AsyncSession, lesson, student_id: int):
         """Проверяет ученика и его активное членство в группе."""
@@ -61,8 +64,9 @@ class AttendanceService:
             raise HTTPException(status_code=409, detail=f"Ученик {student_id} не является активным участником группы")
         return student
 
-    async def sync_attendance(self, session: AsyncSession, lesson_id: int,
-                              data: AttendanceSyncRequest, current_user: User) -> LessonAttendanceResponse:
+    async def sync_attendance(
+        self, session: AsyncSession, lesson_id: int, data: AttendanceSyncRequest, current_user: User
+    ) -> LessonAttendanceResponse:
         """Синхронизирует полный список и при первом сохранении завершает занятие."""
         lesson = await self.get_lesson(session, lesson_id, current_user)
         self.validate_edit_time(lesson)
@@ -84,14 +88,17 @@ class AttendanceService:
             if subscription is None:
                 raise HTTPException(
                     status_code=409,
-                    detail=f"У ученика {student.first_name} {student.last_name} нет действующего абонемента со свободными занятиями",
+                    detail=f"""У ученика {student.first_name} {student.last_name}
+                    нет действующего абонемента со свободными занятиями""",
                 )
-            new_items.append(Attendance(
-                lesson_id=lesson.id,
-                student_id=student.id,
-                subscription_id=subscription.id,
-                marked_by=current_user.id,
-            ))
+            new_items.append(
+                Attendance(
+                    lesson_id=lesson.id,
+                    student_id=student.id,
+                    subscription_id=subscription.id,
+                    marked_by=current_user.id,
+                )
+            )
 
         for student_id in to_remove:
             await session.delete(existing_by_student[student_id])

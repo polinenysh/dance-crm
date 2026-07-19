@@ -21,10 +21,7 @@ def resolve_branch_id(
                 detail="Администратор не привязан к филиалу",
             )
 
-        if (
-            requested_branch_id is not None
-            and requested_branch_id != current_user.branch_id
-        ):
+        if requested_branch_id is not None and requested_branch_id != current_user.branch_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Нет доступа к статистике другого филиала",
